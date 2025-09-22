@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 
 def get_recommendations_with_platforms(trains_df, platforms_df):
     """
@@ -34,24 +35,58 @@ def get_recommendations_with_platforms(trains_df, platforms_df):
         
     return recommendations
 
-def run_simulation(trains_filepath, platforms_filepath):
+def interactive_update_delays(df):
+    """
+    Prompts the user for changes to train delays.
+    
+    Args:
+        df (pd.DataFrame): The DataFrame of train data.
+    
+    Returns:
+        The updated DataFrame.
+    """
+    print("\n--- Current Train Delays ---")
+    print(df[['Trip_ID', 'Train_Name', 'delay']].head(10)) # Showing a few more rows for clarity
+    
+    # We use a loop to allow the user to make multiple changes
+    while True:
+        train_id = input("\nEnter the Trip_ID of the train to update (or 'q' to quit): ").strip()
+        if train_id.lower() == 'q':
+            break
+
+        if train_id not in df['Trip_ID'].values:
+            print("❌ Error: Trip_ID not found. Please try again.")
+            continue
+
+        try:
+            new_delay = int(input(f"Enter the new delay in seconds for {train_id}: "))
+        except ValueError:
+            print("❌ Error: Invalid input. Please enter a number.")
+            continue
+
+        # Update the DataFrame
+        df.loc[df['Trip_ID'] == train_id, 'delay'] = new_delay
+        print(f"✅ Updated delay for {train_id} to {new_delay} seconds.")
+        
+    return df
+
+def run_simulation(trains_filepath, platforms_filepath, df_trains_updated):
     """
     Main function to load data and run the simulation.
     """
     # --- Load the datasets ---
     try:
-        df_trains = pd.read_csv(trains_filepath)
         df_platforms = pd.read_csv(platforms_filepath)
     except FileNotFoundError as e:
         print(f"❌ Error: Could not find the file '{e.filename}'.")
         return
 
     # --- Run the AI Engine ---
-    print("--- 🚂 Section Controller AI ---")
-    print(f"Ranking {len(df_trains)} trains against {len(df_platforms[df_platforms['Is_Available'] == True])} available platform lines.")
+    print("\n--- 🚂 Section Controller AI ---")
+    print(f"Ranking {len(df_trains_updated)} trains against {len(df_platforms[df_platforms['Is_Available'] == True])} available platform lines.")
     print("---------------------------------")
 
-    full_recommendations = get_recommendations_with_platforms(df_trains, df_platforms)
+    full_recommendations = get_recommendations_with_platforms(df_trains_updated, df_platforms)
 
     # --- Output the final decision ---
     if full_recommendations:
@@ -70,4 +105,17 @@ def run_simulation(trains_filepath, platforms_filepath):
 if __name__ == "__main__":
     train_data_file = "trains.csv"
     platform_data_file = "platform_dataset.csv"
-    run_simulation(train_data_file, platform_data_file)
+
+    try:
+        # Load the original data
+        df_trains_original = pd.read_csv(train_data_file)
+        
+        # Get updates from the user
+        df_trains_updated = interactive_update_delays(df_trains_original.copy())
+
+        # Run the simulation with the updated data
+        run_simulation(train_data_file, platform_data_file, df_trains_updated)
+
+    except FileNotFoundError as e:
+        print(f"❌ Error: The file '{e.filename}' was not found.")
+        print("Please ensure both CSV files are in the same directory as the script.")
