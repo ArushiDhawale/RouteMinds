@@ -4,7 +4,6 @@ import os
 import time
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
-from main import get_platform_queues  # Import your platform queue logic
 
 # --- Constants ---
 REFRESH_INTERVAL = 180  # Auto-refresh interval in seconds
@@ -17,11 +16,9 @@ st_autorefresh(interval=COUNTDOWN_REFRESH * 1000, key="countdown_timer")
 if "last_refresh" not in st.session_state:
     st.session_state.last_refresh = time.time()
 
-# --- Remaining time calculation ---
+# --- Trigger full refresh if interval passed ---
 elapsed = time.time() - st.session_state.last_refresh
 remaining = max(0, REFRESH_INTERVAL - int(elapsed))
-
-# --- Trigger full refresh if interval passed ---
 if remaining == 0:
     st.session_state.last_refresh = time.time()
     st.experimental_rerun()
@@ -31,7 +28,7 @@ def get_recommendations_with_platforms(trains_df, platforms_df):
     """
     AI Engine that ranks trains and suggests an available platform for each of the top 10.
     """
-    available_lines = platforms_df[platforms_df['Is_Available'] == True].to_dict('records')
+    available_lines = platforms_df[platforms_df['Is_Available']].to_dict('records')
     trains_list = trains_df.to_dict('records')
     sorted_trains = sorted(trains_list, key=lambda train: (
         train.get('priority', 0),
@@ -43,6 +40,25 @@ def get_recommendations_with_platforms(trains_df, platforms_df):
     for i in range(num_suggestions):
         recommendations.append((sorted_trains[i], available_lines[i]))
     return recommendations
+
+def get_platform_queues(df_trains, df_platforms):
+    """
+    Groups trains by their assigned platform, creating queues for each.
+    """
+    platform_queues = {platform: [] for platform in df_platforms['Platform_ID'].unique()}
+
+    # Assign trains to platforms based on availability
+    available_platforms = df_platforms[df_platforms['Is_Available'] == True]['Platform_ID'].unique()
+    trains_to_assign = df_trains.sort_values(by='priority', ascending=False)
+    
+    for _, train in trains_to_assign.iterrows():
+        # A simple assignment logic: assign to the first available platform
+        if available_platforms.size > 0:
+            assigned_platform = available_platforms[0]
+            if assigned_platform in platform_queues:
+                platform_queues[assigned_platform].append(train.to_dict())
+
+    return platform_queues
 
 # --- Streamlit Layout ---
 st.set_page_config(page_title="Train Section Controller", layout="wide")
@@ -67,11 +83,21 @@ try:
     st.sidebar.header("Live Data Preview")
     st.sidebar.write("Waiting Trains:")
     st.sidebar.dataframe(df_trains.head())
-    st.sidebar.write("Platform Status:")
-    st.sidebar.dataframe(df_platforms)
+
+    # --- Platform Status with Manual Override ---
+    st.sidebar.write("Platform Status (Manual Override):")
+    
+    # Use st.data_editor to allow direct editing of the dataframe
+    edited_df = st.sidebar.data_editor(df_platforms, key="platform_editor")
+    
+    # Save the edited dataframe back to the CSV
+    edited_df.to_csv(os.path.join(BASE_DIR, "platform_dataset.csv"), index=False)
+
+    # Use the edited dataframe for all calculations
+    full_recommendations = get_recommendations_with_platforms(df_trains, edited_df)
+    platform_queues = get_platform_queues(df_trains, edited_df)
 
     # --- AI Recommendations Table ---
-    full_recommendations = get_recommendations_with_platforms(df_trains, df_platforms)
     st.header("🏆 Top Actionable Recommendations")
     if full_recommendations:
         output_data = []
@@ -90,7 +116,7 @@ try:
 
     # --- Platform Queues: Separate Tables per Platform ---
     st.header("📊 Platform Queue Status")
-    platform_queues = get_platform_queues(df_trains, df_platforms)
+    platform_queues = get_platform_queues(df_trains, edited_df)
 
     if not platform_queues:
         st.info("✅ No queues to display. All platforms are busy or no trains are waiting.")
@@ -120,16 +146,15 @@ try:
             
             df_platform = pd.DataFrame(platform_rows)
 
-            # --- Color-coding rows ---
             def highlight_row(row):
                 if row.Status == "Arriving":
-                    return[] *len(row)
+                    return [] * len(row)
                 elif row.Status == "Queued":
-                    return[] *len(row)
-                elif row['Delay (s)'] > 300:  # example threshold for high delay
-                    return[] *len(row)
+                    return [] * len(row)
+                elif row['Delay (s)'] > 300:
+                    return [] * len(row)
                 else:
-                    return []*len(row)
+                    return [''] * len(row)
 
             st.dataframe(df_platform.style.apply(highlight_row, axis=1))
 
