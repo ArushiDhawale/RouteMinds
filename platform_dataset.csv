@@ -1,6 +1,6 @@
 Platform_ID,Line_ID,Is_Available
 Platform_1,Line_A,False
-Platform_1,Line_B,True
+Platform_1,Line_B,False
 Platform_2,Line_A,True
 Platform_2,Line_B,False
 Platform_2,Line_C,False
