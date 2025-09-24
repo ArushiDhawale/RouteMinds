@@ -191,7 +191,7 @@ if platform_queues:
 
     for platform in sorted(platform_queues.keys(), key=platform_sort_key):
         queue = platform_queues[platform]
-        st.subheader(f"Platform: {platform}")
+        st.subheader(f"{platform}")
         if not queue:
             st.write("- No trains in queue.")
             continue
