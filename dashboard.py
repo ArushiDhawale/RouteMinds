@@ -275,7 +275,7 @@ if platform_queues:
         if platform in st.session_state.pending_priority_platforms:
             st.warning(f"⚠️ Manual priority changes detected for Platform {platform}! Apply changes?")
             col1, col2 = st.columns(2)
-            if col1.button(f"Agree - Apply Changes for Platform {platform}"):
+            if col1.button(f"Agree - Apply Changes for {platform}"):
                 pending_df = st.session_state.pending_priority_platforms[platform]
                 # Update the main overrides DataFrame
                 for _, row in pending_df.iterrows():
@@ -295,7 +295,7 @@ if platform_queues:
                 del st.session_state.pending_priority_platforms[platform]
                 st.experimental_rerun()
 
-            if col2.button(f"Disagree - Revert Changes for Platform {platform}"):
+            if col2.button(f"Disagree - Revert Changes for {platform}"):
                 if platform in st.session_state.pending_priority_platforms:
                     del st.session_state.pending_priority_platforms[platform]
                 
