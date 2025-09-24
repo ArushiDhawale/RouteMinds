@@ -24,7 +24,7 @@ if remaining == 0:
     st.experimental_rerun()
 
 st.set_page_config(page_title="Train Section Controller", layout="wide")
-st.title("🚂 AI Train Section Controller Dashboard")
+st.title("AI Train Section Controller Dashboard")
 
 if st.button("🔄 Refresh Now"):
     st.session_state.last_refresh = time.time()
@@ -137,13 +137,13 @@ if changed_platforms.any() and st.session_state.pending_platform is None:
 if st.session_state.pending_platform is not None:
     st.warning("⚠️ Platform availability changes detected! Apply changes?")
     col1, col2 = st.columns(2)
-    if col1.button("✅ Agree - Apply Changes"):
+    if col1.button("Agree - Apply Changes"):
         st.session_state.pending_platform.to_csv(os.path.join(BASE_DIR, "platform_dataset.csv"), index=False)
         st.session_state.platform_original = st.session_state.pending_platform["Is_Available"].copy()
         st.session_state.pending_platform = None
         st.session_state.platforms_sidebar = st.session_state.pending_platform.copy()
         st.experimental_rerun()
-    if col2.button("❌ Disagree - Revert Changes"):
+    if col2.button("Disagree - Revert Changes"):
         st.session_state.platforms_sidebar["Is_Available"] = st.session_state.platform_original.copy()
         st.session_state.pending_platform = None
         st.experimental_rerun()
@@ -164,7 +164,7 @@ def get_recommendations_with_platforms(trains_df, platforms_df):
     return recommendations
 
 full_recommendations = get_recommendations_with_platforms(df_trains, df_platforms)
-st.header("🏆 Top Actionable Recommendations")
+st.header("Top Actionable Recommendations")
 if full_recommendations:
     output_data = []
     for i, (train, platform) in enumerate(full_recommendations):
@@ -178,10 +178,10 @@ if full_recommendations:
     df_display = pd.DataFrame(output_data)
     st.dataframe(df_display.set_index("Rank"))
 else:
-    st.info("ℹ️ No recommendations to display.")
+    st.info(" No recommendations to display.")
 
 # --- Platform Queues ---
-st.header("📊 Platform Queue Status")
+st.header(" Platform Queue Status")
 platform_queues = get_platform_queues(df_trains, df_platforms)
 
 if platform_queues:
@@ -275,7 +275,7 @@ if platform_queues:
         if platform in st.session_state.pending_priority_platforms:
             st.warning(f"⚠️ Manual priority changes detected for Platform {platform}! Apply changes?")
             col1, col2 = st.columns(2)
-            if col1.button(f"✅ Agree - Apply Changes for Platform {platform}"):
+            if col1.button(f"Agree - Apply Changes for Platform {platform}"):
                 pending_df = st.session_state.pending_priority_platforms[platform]
                 # Update the main overrides DataFrame
                 for _, row in pending_df.iterrows():
@@ -295,7 +295,7 @@ if platform_queues:
                 del st.session_state.pending_priority_platforms[platform]
                 st.experimental_rerun()
 
-            if col2.button(f"❌ Disagree - Revert Changes for Platform {platform}"):
+            if col2.button(f"Disagree - Revert Changes for Platform {platform}"):
                 if platform in st.session_state.pending_priority_platforms:
                     del st.session_state.pending_priority_platforms[platform]
                 
