@@ -234,7 +234,7 @@ if platform_queues:
         ).drop(columns=["_SortVal"]).reset_index(drop=True)
 
         # Add Sr. No
-        df_sorted["Sr. No"] = df_sorted.index + 1
+        df_sorted["Sr. No"] = df_sorted.index
         cols = ["Sr. No"] + [c for c in df_sorted.columns if c != "Sr. No"]
         df_sorted = df_sorted[cols]
 
