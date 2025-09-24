@@ -31,7 +31,7 @@ if st.button("🔄 Refresh Now"):
     st.experimental_rerun()
 
 st.caption(f"⏳ Next auto-refresh in **{remaining} seconds**")
-st.write(f"Displaying recommendations for **{pd.Timestamp.now(tz='Asia/Kolkata').strftime('%A, %d %B %Y %I:%M %p IST')}**")
+st.write(f"Displaying the schedule for **{pd.Timestamp.now(tz='Asia/Kolkata').strftime('%A, %d %B %Y %I:%M %p IST')}**")
 
 # --- Helpers ---
 def safe_int(x, fallback=0):
@@ -164,7 +164,7 @@ def get_recommendations_with_platforms(trains_df, platforms_df):
     return recommendations
 
 full_recommendations = get_recommendations_with_platforms(df_trains, df_platforms)
-st.header("Top Actionable Recommendations")
+st.header("Current Train Schedule")
 if full_recommendations:
     output_data = []
     for i, (train, platform) in enumerate(full_recommendations):
@@ -178,7 +178,7 @@ if full_recommendations:
     df_display = pd.DataFrame(output_data)
     st.dataframe(df_display.set_index("Rank"))
 else:
-    st.info(" No recommendations to display.")
+    st.info(" No schedule to display.")
 
 # --- Platform Queues ---
 st.header(" Platform Queue Status")
@@ -273,7 +273,7 @@ if platform_queues:
 
         # Confirmation alert for this platform
         if platform in st.session_state.pending_priority_platforms:
-            st.warning(f"⚠️ Manual priority changes detected for Platform {platform}! Apply changes?")
+            st.warning(f"⚠️ Manual priority changes detected for {platform}! Apply changes?")
             col1, col2 = st.columns(2)
             if col1.button(f"Agree - Apply Changes for {platform}"):
                 pending_df = st.session_state.pending_priority_platforms[platform]
