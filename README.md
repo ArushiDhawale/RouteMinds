@@ -2,6 +2,7 @@
 Prototype of an AI-based section controller for railway traffic management.
 
 AI-Based Train Section Controller
+
 📖 Overview
 This project is a prototype of an AI-based section controller for railway traffic management. It uses a rule-based expert system to analyze real-time data about waiting trains and platform availability. The system's goal is to provide a ranked list of actionable recommendations to a human controller, helping them make efficient and logical decisions to optimize train flow and minimize delays.
 
