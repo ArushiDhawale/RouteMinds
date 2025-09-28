@@ -413,6 +413,7 @@ for platform in sorted(platform_queues.keys(), key=platform_sort_key):
                 if trip_id in st.session_state.df_overrides["Trip ID"].values:
                     st.session_state.df_overrides.loc[st.session_state.df_overrides["Trip ID"] == trip_id, "Manual Priority"] = manual_priority
                 else:
+
                     new_row = pd.DataFrame([{"Trip ID": trip_id, "Manual Priority": manual_priority}])
                     st.session_state.df_overrides = pd.concat([st.session_state.df_overrides, new_row], ignore_index=True)
             st.session_state.df_overrides = st.session_state.df_overrides[st.session_state.df_overrides["Manual Priority"].isin(ALLOWED_LABELS)]
@@ -432,4 +433,16 @@ for platform in sorted(platform_queues.keys(), key=platform_sort_key):
             st.session_state.revert_trigger += 1
             st.experimental_rerun()
 
+<<<<<<< HEAD
     st.markdown('</div>', unsafe_allow_html=True)
+=======
+    st.markdown('</div>', unsafe_allow_html=True)
+
+                    st.session_state.df_overrides = pd.DataFrame(columns=["Trip ID", "Manual Priority"])
+                
+                # Increment the trigger to force a UI reset
+                st.session_state.revert_trigger += 1
+                
+                st.experimental_rerun()
+
+>>>>>>> b90390d21f3d727b0c9fa78b9f73037b0b917bdf
