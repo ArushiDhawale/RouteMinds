@@ -10,44 +10,156 @@ import re
 # --- Enhanced Styling ---
 st.markdown(
     """
-    <style>
-    body { background-color: #f4f6f8; font-family: 'Poppins', sans-serif; }
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    
+    body { 
+        background-color: #f7fafc; /* Lighter, cleaner background */
+        font-family: 'Poppins', sans-serif; 
+        color: #2d3748; /* Dark slate gray for text */
+    }
 
     /* Page Title */
-    .css-1d391kg h1 { color: #0d3b66; font-size: 42px; font-weight: 700; margin-bottom: 10px; }
+    .stApp > header {
+        background-color: transparent;
+    }
+    .css-1d391kg h1, .st-emotion-cache-10trblm h1 {
+        color: #2d3748;
+        font-size: 40px; 
+        font-weight: 600; 
+        padding-top: 1rem;
+        text-shadow: none;
+    }
 
     /* Section Headers */
-    .css-1v3fvcr h2 { color: #0d3b66; font-size: 28px; font-weight: 600; 
-                       border-bottom: 2px solid #0d3b66; padding-bottom: 5px; margin-top: 25px; }
-
-    /* DataFrames */
-    .stDataFrame table, .stDataEditor table { border-collapse: collapse; width: 100%; }
-    .stDataFrame th, .stDataFrame td, .stDataEditor th, .stDataEditor td {
-        padding: 10px; text-align: left; border-bottom: 1px solid #ddd;
+    h2 { 
+        color: #2d3748;
+        font-size: 24px; 
+        font-weight: 600;  
+        border-bottom: 1px solid #e2e8f0; /* Thinner, lighter border */
+        padding-bottom: 8px; 
+        margin-top: 40px; 
+        margin-bottom: 20px;
     }
-    .stDataFrame tr:hover, .stDataEditor tr:hover { background-color: #dbeafe; }
+    
+    /* Subheaders (for Platform Names) */
+    h3 {
+        color: #2d3748;
+        font-size: 20px;
+        margin-top: 0;
+        border-bottom: none;
+    }
 
-    /* Buttons */
-    .stButton>button { background-color: #0d3b66; color: white; border-radius: 10px; 
-                        padding: 10px 18px; font-weight: 600; border: none; }
-    .stButton>button:hover { background-color: #144d87; cursor: pointer; }
+    /* DataFrames & DataEditor */
+    .stDataFrame, .stDataEditor {
+        border: 1px solid #e2e8f0;
+        box-shadow: none;
+        border-radius: 8px;
+    }
+    .stDataFrame table, .stDataEditor table { 
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .stDataFrame thead th, .stDataEditor thead th {
+        background-color: #f7fafc; /* Very light gray background */
+        color: #718096; /* Muted gray text */
+        font-weight: 600;
+        font-size: 14px;
+        padding: 12px 14px; 
+        text-align: left; 
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .stDataFrame tbody tr:nth-child(even), .stDataEditor tbody tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+    .stDataFrame tbody tr:hover, .stDataEditor tbody tr:hover { 
+        background-color: #f7fafc; /* Subtle hover */
+    }
+    .stDataFrame tbody td, .stDataEditor tbody td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 15px;
+    }
+    .stDataFrame tbody tr:last-child td, .stDataEditor tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* General Button Styling (for Refresh button etc.) */
+    .stButton>button { 
+        background-color: #2d3748; /* Dark slate gray */
+        color: white; 
+        border-radius: 8px;  
+        padding: 8px 15px; 
+        font-weight: 600; 
+        border: 1px solid #2d3748;
+        box-shadow: none;
+        transition: all 0.2s ease-in-out;
+    }
+    .stButton>button:hover { 
+        background-color: #4a5568; /* Lighter gray on hover */
+        border-color: #4a5568;
+        cursor: pointer; 
+        transform: none; /* No lift effect */
+        box-shadow: none;
+    }
+    
+  /* --- Specific Button Styling for Agree/Disagree (Light Tones) --- */
+    
+/* Agree Button (Light Green) - Placed in the first column */
+div[data-testid="stHorizontalBlock"] > div:nth-child(1) .stButton > button {
+    background-color: #e6fffa !important; /* Very light mint green */
+    border-color: #38a169 !important;
+    color: black !important; /* Dark green text */
+}
+div[data-testid="stHorizontalBlock"] > div:nth-child(1) .stButton > button:hover {
+    background-color: #c6f6d5 !important;
+    border-color: #2f855a !important;
+}
+
+/* Disagree Button (Light Red) - Placed in the second column */
+div[data-testid="stHorizontalBlock"] > div:nth-child(2) .stButton > button {
+    background-color: #fff5f5 !important; /* Very light pink */
+    border-color: #e53e3e !important;
+    color: black !important; /* Dark red text */
+}
+div[data-testid="stHorizontalBlock"] > div:nth-child(2) .stButton > button:hover {
+    background-color: #fed7d7 !important;
+    border-color: #c53030 !important;
+}
 
     /* Alerts */
-    .stAlert { border-radius: 10px; padding: 12px; font-size: 15px; font-weight: 500; }
-
+    .stAlert { 
+        border-radius: 8px; 
+        padding: 15px; 
+        font-size: 15px; 
+        font-weight: 500; 
+        border: 1px solid #f6e05e;
+        background-color: #fffbeb;
+        color: #b7791f;
+        box-shadow: none;
+    }
+    
     /* Sidebar */
-    .css-1lcbmhc { background-color: #e1e5ea; border-radius: 12px; padding: 12px; }
-
-    /* Cards for Platform Queues */
-    .platform-card { background-color: #ffffff; border-radius: 12px; padding: 15px; 
-                     box-shadow: 0px 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .css-1lcbmhc { 
+        background-color: #ffffff; 
+        border-radius: 12px; 
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+    }
 
     /* Countdown / Caption */
-    .stCaption { font-size: 14px; color: #555555; margin-bottom: 15px; }
-    </style>
+    .stCaption { 
+        font-size: 14px; 
+        color: #718096; /* Muted gray */
+        margin-bottom: 15px; 
+    }
+</style>
     """,
     unsafe_allow_html=True
 )
+
 
 # --- Constants ---
 REFRESH_INTERVAL = 180  # seconds
@@ -171,8 +283,8 @@ if st.session_state.pending_platform is not None:
     if col1.button("Agree - Apply Changes"):
         st.session_state.pending_platform.to_csv(os.path.join(BASE_DIR, "platform_dataset.csv"), index=False)
         st.session_state.platform_original = st.session_state.pending_platform["Is_Available"].copy()
-        st.session_state.pending_platform = None
         st.session_state.platforms_sidebar = st.session_state.pending_platform.copy()
+        st.session_state.pending_platform = None
         st.experimental_rerun()
     if col2.button("Disagree - Revert Changes"):
         st.session_state.pending_platform = None
