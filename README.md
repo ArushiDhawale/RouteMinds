@@ -1,10 +1,10 @@
 # RouteMinds
 
-Prototype of an AI-based Section Controller for Railway Traffic Management
+Prototype of an AI-based system to assist the Section Controllers for Railway Traffic Management
 
 ## **Overview**
 
-RouteMinds is a prototype AI-driven section controller designed to optimize railway traffic management. It leverages a rule-based expert system to analyze real-time data on waiting trains and platform availability, dynamically updating train schedules to improve efficiency and reduce delays.
+This is a prototype of an AI-driven system to assist the section controllers. It is designed to optimize railway traffic management. It leverages a rule-based expert system to analyze real-time data on waiting trains and platform availability, dynamically updating train schedules to improve efficiency and reduce delays.
 
 This system considers a dataset of 70 trains and generates updated schedules based on a prioritized evaluation of trains using:
 
